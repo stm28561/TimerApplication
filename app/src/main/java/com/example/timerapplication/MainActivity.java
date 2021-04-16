@@ -3,12 +3,15 @@ package com.example.timerapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    private TextView textViewTimer;
     private int seconds = 0;
     private boolean isRunning = false;
 
@@ -16,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        textViewTimer = findViewById(R.id.textViewTimer);
+        runTimer();
     }
 
     public void onClickStartTimer(View view) {
@@ -32,10 +37,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void runTimer() {
-        int hours = seconds/3600;
-        int minutes = (seconds % 3600) / 60;
-        int sec = seconds % 60;
+        final Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                int hours = seconds/3600;
+                int minutes = (seconds % 3600) / 60;
+                int sec = seconds % 60;
 
-        String time = String.format(Locale.getDefault(), "%d:%02d:%02d", hours, minutes, sec);
+                String time = String.format(Locale.getDefault(), "%d:%02d:%02d", hours, minutes, sec);
+                textViewTimer.setText(time);
+
+                if (isRunning) {
+                    seconds++;
+                }
+                handler.postDelayed(this, 1000);
+            }
+        });
+
+
     }
 }
